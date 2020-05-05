@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 /*Все действия по обработке данных выполнять с использованием LINQ
  * 
@@ -52,6 +53,8 @@ using System.Linq;
 namespace Task03 {
     class Program {
         static void Main(string[] args) {
+            Console.InputEncoding = Console.OutputEncoding = Encoding.UTF8;
+            
             int N;
             List<ComputerInfo> computerInfoList = new List<ComputerInfo>();
             try {
@@ -150,6 +153,8 @@ namespace Task03 {
         /// <param name="computerManufacturer">Изготовитель</param>
         /// <param name="year">Год выпуска</param>
         public ComputerInfo(string owner, Manufacturer computerManufacturer, int year) {
+            if (year < 1970 || year > 2020)
+                throw new ArgumentException("Неправиьлное значение года");
             Owner = owner;
             ComputerManufacturer = computerManufacturer;
             Year = year;
