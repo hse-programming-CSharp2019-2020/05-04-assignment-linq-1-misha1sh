@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,43 +32,67 @@ using System.Threading.Tasks;
  * 
  */
 
-namespace Task01
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
+namespace Task01 {
+    class Program {
+        static void Main(string[] args) {
             RunTesk01();
         }
 
-        public static void RunTesk01()
-        {
+        public static void RunTesk01() {
             int[] arr;
-            try
-            {
+            try {
                 // Попробуйте осуществить считывание целочисленного массива, записав это ОДНИМ ВЫРАЖЕНИЕМ.
-                arr = 
+                arr = Console.ReadLine()
+                    .Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                    .Select(int.Parse)
+                    .ToArray();
+                if (arr.Length == 0)
+                    throw new InvalidOperationException();
             }
-            
+            catch (FormatException ex) {
+                Console.WriteLine("FormatException");
+                return;
+            }
+            catch (IOException ex) {
+                Console.WriteLine("IOException");
+                return;
+            }
+            catch (InvalidOperationException ex) {
+                Console.WriteLine("InvalidOperationException");
+                return;
+            }
+
             // использовать синтаксис запросов!
-            IEnumerable<int> arrQuery = from 
+            IEnumerable<int> arrQuery =
+                from number in arr
+                where number < 0 || number % 2 == 0
+                select number;
 
             // использовать синтаксис методов!
-            IEnumerable<int> arrMethod = arr.
+            IEnumerable<int> arrMethod = arr.Where(num => num < 0 || num % 2 == 0);
 
-            try
-            {
+            try {
                 PrintEnumerableCollection<int>(arrQuery, ":");
                 PrintEnumerableCollection<int>(arrMethod, "*");
+            }
+            catch (IOException ex) {
+                Console.WriteLine("IOException");
             }
         }
 
         // Попробуйте осуществить вывод элементов коллекции с учетом разделителя, записав это ОДНИМ ВЫРАЖЕНИЕМ.
         // P.S. Есть два способа, оставьте тот, в котором применяется LINQ...
-        public static void PrintEnumerableCollection<T>(IEnumerable<T> collection, string separator)
-        {
-           
-           
+        public static void PrintEnumerableCollection<T>(IEnumerable<T> collection, string separator) {
+            Console.WriteLine(
+                collection.Select(t => t.ToString())
+                    .Aggregate((elem1, elem2) => $"{elem1}{separator}{elem2}")); 
+            // не совсем понятно, почему способа только два и какой из этого множества имеется ввиду.
+            //   Альтернативное решение:
+            // collection.Select(t => t.ToString())
+            //  .Aggregate((elem1, elem2) => $"{elem1}{separator}{elem2}")
+            //  .ToList()
+            //  .ForEach(Console.Write)
+            //  посимвольный вывод, зато всё в одно выражение
         }
     }
 }
