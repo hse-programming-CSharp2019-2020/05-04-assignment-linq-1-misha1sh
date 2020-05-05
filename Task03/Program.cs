@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 /*Все действия по обработке данных выполнять с использованием LINQ
@@ -48,50 +49,123 @@ using System.Linq;
  * При некорректных входных данных (не связанных с созданием объекта) выбрасывайте FormatException
  * При невозможности создать объект класса ComputerInfo выбрасывайте ArgumentException!
  */
-namespace Task03
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            int N
+namespace Task03 {
+    class Program {
+        static void Main(string[] args) {
+            int N;
             List<ComputerInfo> computerInfoList = new List<ComputerInfo>();
-            try
-            {
-                N = 
-                
-                for (int i = 0; i < N; i++)
-                {
+            try {
+                // считываем число компьютеров
+                N = int.Parse(Console.ReadLine());
+                if (N <= 0)
+                    throw new FormatException("N должно быть положительно");
+                for (int i = 0; i < N; i++) {
+                    var spl = Console.ReadLine().Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                    if (spl.Length < 3)
+                        throw new ArgumentException("Мало аргументов");
                     
+                    string name = spl[0];
+                    
+                    int year = int.Parse(spl[1]);
+                    
+                    int code = int.Parse(spl[2]);
+                    if (!Enum.IsDefined(typeof(Manufacturer), code))
+                        throw new ArgumentException("Некорркетный код");
+                    Manufacturer manufacturer = (Manufacturer)code;
+                    
+                    computerInfoList.Add(new ComputerInfo(name, manufacturer, year));
                 }
             }
-           
+            catch (FormatException ex) {
+                Console.WriteLine("FormatException");
+                return;
+            }
+            catch (IOException ex) {
+                Console.WriteLine("IOException");
+                return;
+            }
+            catch (InvalidOperationException ex) {
+                Console.WriteLine("InvalidOperationException");
+                return;
+            }
+            catch (OverflowException ex) {
+                Console.WriteLine("OverflowException");
+                return;
+            }
+            catch (ArgumentException ex) {
+                Console.WriteLine("ArgumentException");
+                return;
+            }
 
             // выполните сортировку одним выражением
-            var computerInfoQuery = from 
+            var computerInfoQuery = from computer in computerInfoList
+                orderby computer.Owner descending, computer.ComputerManufacturer.ToString() , computer.Year descending
+                select computer;
 
-            PrintCollectionInOneLine(computerInfoQuery);
+            PrintCollectionInOneLine (computerInfoQuery);
 
             Console.WriteLine();
 
             // выполните сортировку одним выражением
-            var computerInfoMethods = computerInfoList.
-
+            var computerInfoMethods = computerInfoList
+                .OrderByDescending(o => o.Owner)
+                .ThenBy(o => o.ComputerManufacturer.ToString())
+                .ThenByDescending(o => o.Year);
             PrintCollectionInOneLine(computerInfoMethods);
-            
         }
 
         // выведите элементы коллекции на экран с помощью кода, состоящего из одной линии (должна быть одна точка с запятой)
-        public static void PrintCollectionInOneLine(IEnumerable<ComputerInfo> collection)
-        {
+        // Попробуйте осуществить вывод элементов коллекции с учетом разделителя, записав это ОДНИМ ВЫРАЖЕНИЕМ.
+        // P.S. Есть два способа, оставьте тот, в котором применяется LINQ...
+        /// <summary>
+        ///     Выводит коллекцию 
+        /// </summary>
+        /// <param name="collection">Коллекция</param>
+        public static void PrintCollectionInOneLine(IEnumerable<ComputerInfo> collection) {
+            collection.Select(t => $"{t.Owner}: {t.ComputerManufacturer} [{t.Year}]")
+                .ToList()
+                .ForEach(Console.WriteLine);
         }
     }
 
+    /// <summary>
+    ///     Изготовитель
+    /// </summary>
+    enum Manufacturer {
+        Dell = 0,
+        Asus = 1,
+        Apple = 2,
+        Microsoft = 3
+    }
 
-    class ComputerInfo
-    {
+    /// <summary>
+    ///     Класс для информации о компьбтере
+    /// </summary>
+    class ComputerInfo {
+
+        /// <summary>
+        ///     Конструктор информации о компьютере
+        /// </summary>
+        /// <param name="owner">Владелец</param>
+        /// <param name="computerManufacturer">Изготовитель</param>
+        /// <param name="year">Год выпуска</param>
+        public ComputerInfo(string owner, Manufacturer computerManufacturer, int year) {
+            Owner = owner;
+            ComputerManufacturer = computerManufacturer;
+            Year = year;
+        }
+
+        /// <summary>
+        ///     Владелец компьютера
+        /// </summary>
         public string Owner { get; set; }
+        /// <summary>
+        ///     Изготовитель
+        /// </summary>
         public Manufacturer ComputerManufacturer { get; set; }
-        
+        /// <summary>
+        ///     Год выпуска
+        /// </summary>
+        public int Year { get; set; }
     }
 }

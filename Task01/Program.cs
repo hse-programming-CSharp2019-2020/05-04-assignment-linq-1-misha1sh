@@ -90,6 +90,11 @@ namespace Task01 {
 
         // Попробуйте осуществить вывод элементов коллекции с учетом разделителя, записав это ОДНИМ ВЫРАЖЕНИЕМ.
         // P.S. Есть два способа, оставьте тот, в котором применяется LINQ...
+        /// <summary>
+        ///     Выводит коллекцию в одну строку
+        /// </summary>
+        /// <param name="collection">Коллекция</param>
+        /// <param name="separator">Разделитель</param>
         public static void PrintEnumerableCollection<T>(IEnumerable<T> collection, string separator) {
             Console.WriteLine(
                 collection.Select(t => t.ToString())
