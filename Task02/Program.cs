@@ -70,11 +70,13 @@ namespace Task02 {
             var filteredCollection = arr.TakeWhile(num => num != 0).ToList();
 
             try {
+                checked {
+                    var sqrFilteredCollection = filteredCollection.Select(x => x * x).ToList();
 
                 // использовать статическую форму вызова метода подсчета среднего
-                double averageUsingStaticForm = Enumerable.Average(filteredCollection.Select(x => x*x));
+                double averageUsingStaticForm = Enumerable.Average(sqrFilteredCollection);
                 // использовать объектную форму вызова метода подсчета среднего
-                double averageUsingInstanceForm = filteredCollection.Select(x => x*x).Average();
+                double averageUsingInstanceForm = sqrFilteredCollection.Average();
 
                 Console.WriteLine($"{averageUsingStaticForm:f3}".Replace('.', ','));
                 Console.WriteLine($"{averageUsingInstanceForm:f3}".Replace('.', ','));
@@ -83,6 +85,8 @@ namespace Task02 {
                 Console.WriteLine(
                     filteredCollection.Select(t => t.ToString())
                         .Aggregate((elem1, elem2) => $"{elem1} {elem2}"));
+                }
+
             }
             catch (OverflowException) {
                 Console.WriteLine("OverflowException");
