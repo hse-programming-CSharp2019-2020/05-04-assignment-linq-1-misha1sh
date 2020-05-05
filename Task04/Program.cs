@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 
 /*
  * На вход подается строка, состоящая из целых чисел типа int, разделенных одним или несколькими пробелами.
@@ -30,39 +32,69 @@
 
 namespace Task04
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
+    class Program {
+        static void Main(string[] args) {
             RunTesk04();
         }
 
-        public static void RunTesk04()
-        {
+        public static void RunTesk04() {
             int[] arr;
-            try
-            {
+            try {
                 // Попробуйте осуществить считывание целочисленного массива, записав это ОДНИМ ВЫРАЖЕНИЕМ.
-                arr = 
+                arr = Console.ReadLine()
+                    .Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                    .Select(int.Parse)
+                    .ToArray();
+                if (arr.Length == 0)
+                    throw new InvalidOperationException();
             }
-           
-                // использовать синтаксис методов! SQL-подобные запросы не писать!
-               
-                int arrAggregate = arr.
+            catch (FormatException ex) {
+                Console.WriteLine("FormatException");
+                return;
+            }
+            catch (IOException ex) {
+                Console.WriteLine("IOException");
+                return;
+            }
+            catch (InvalidOperationException ex) {
+                Console.WriteLine("InvalidOperationException");
+                return;
+            }
+            catch (OverflowException ex) {
+                Console.WriteLine("OverflowException");
+                return;
+            }
 
-                int arrMyAggregate = MyClass.MyAggregate(arr);
+            // использовать синтаксис методов! SQL-подобные запросы не писать!
 
-                Console.WriteLine(arrAggregate);
-                Console.WriteLine(arrMyAggregate);
-           
+            int arrAggregate = 5 + arr.Select((num, index) => index % 2 == 0? num: -num)
+                                   .Aggregate(((num1, num2) => num1 + num2));
+
+            int arrMyAggregate = MyClass.MyAggregate(arr);
+
+            Console.WriteLine(arrAggregate);
+            Console.WriteLine(arrMyAggregate);
+
         }
     }
 
     static class MyClass
     {
-        public static int MyAggregate()
-        {
-            
+        /// <summary>
+        ///    Складывает числа по формуле: 5 + a[0] - a[1] + a[2] - a[3] + ...
+        /// </summary>
+        /// <param name="arr">Массив чисел</param>
+        public static int MyAggregate(int[] arr) {
+            int res = 5;
+            for (int i = 0; i < arr.Length; i++) {
+                if (i % 2 == 0) {
+                    res += arr[i];
+                } else {
+                    res -= arr[i];
+                }
+            }
+
+            return res;
         }
     }
 }
