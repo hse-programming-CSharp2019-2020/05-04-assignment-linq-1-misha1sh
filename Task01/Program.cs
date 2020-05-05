@@ -82,6 +82,10 @@ namespace Task01 {
             catch (IOException ex) {
                 Console.WriteLine("IOException");
             }
+            catch (InvalidOperationException ex) {
+                Console.WriteLine("InvalidOperationException");
+                return;
+            }
         }
 
         // Попробуйте осуществить вывод элементов коллекции с учетом разделителя, записав это ОДНИМ ВЫРАЖЕНИЕМ.
